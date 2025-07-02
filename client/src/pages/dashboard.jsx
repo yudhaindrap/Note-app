@@ -1,6 +1,8 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function Dashboard() {
   const [notes, setNotes] = useState([]);
@@ -17,9 +19,9 @@ function Dashboard() {
       const data = Array.isArray(res.data) ? res.data : [];
       setNotes(data);
     } catch (err) {
-      alert('Gagal memuat catatan. Silakan login ulang.');
+      toast.error('Sesi login habis, silakan login ulang.');
       localStorage.removeItem('token');
-      navigate('/login');
+      navigate('/login', { replace: true }); // Hindari tombol back
     }
   }, [navigate]);
 
@@ -32,9 +34,10 @@ function Dashboard() {
         },
       });
       setForm({ title: '', content: '' });
+      toast.success('Catatan berhasil ditambahkan!');
       fetchNotes();
     } catch (err) {
-      alert('Gagal menambahkan catatan');
+      toast.error('Gagal menambahkan catatan');
     }
   };
 
@@ -45,21 +48,23 @@ function Dashboard() {
           Authorization: localStorage.getItem('token'),
         },
       });
+      toast.info('Catatan dihapus.');
       fetchNotes();
     } catch (err) {
-      alert('Gagal menghapus catatan');
+      toast.error('Gagal menghapus catatan');
     }
   };
 
   const handleLogout = () => {
     localStorage.removeItem('token');
-    navigate('/login');
+    toast.info('Berhasil logout');
+    navigate('/login', { replace: true }); // replace = blok tombol back
   };
 
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (!token) {
-      navigate('/login');
+      navigate('/login', { replace: true });
     } else {
       fetchNotes();
     }

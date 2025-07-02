@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify'; // Tambahkan ini
+import 'react-toastify/dist/ReactToastify.css'; // Import styling toast
 
 function Login() {
   const [form, setForm] = useState({ username: '', password: '' });
@@ -11,9 +13,10 @@ function Login() {
     try {
       const res = await axios.post('http://localhost:5000/api/auth/login', form);
       localStorage.setItem('token', res.data.token);
-      navigate('/dashboard');
+      toast.success('Login berhasil!', { autoClose: 2000 }); // ✅ notifikasi sukses
+      setTimeout(() => navigate('/dashboard'), 2000); // Redirect setelah toast tampil
     } catch (err) {
-      alert(err.response?.data?.msg || 'Login gagal');
+      toast.error(err.response?.data?.msg || 'Login gagal'); // ✅ notifikasi gagal
     }
   };
 

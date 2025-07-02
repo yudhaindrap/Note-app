@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function Register() {
   const [form, setForm] = useState({ username: '', password: '' });
@@ -10,10 +12,10 @@ function Register() {
     e.preventDefault();
     try {
       const res = await axios.post('http://localhost:5000/api/auth/register', form);
-      alert(res.data.msg);
+      toast.success(res.data.msg || 'Pendaftaran berhasil!');
       navigate('/login');
     } catch (err) {
-      alert(err.response?.data?.msg || 'Gagal mendaftar');
+      toast.error(err.response?.data?.msg || 'Gagal mendaftar');
     }
   };
 
