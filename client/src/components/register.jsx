@@ -11,9 +11,12 @@ function Register() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post('http://localhost:5000/api/auth/register', form);
+      const res = await axios.post(
+        'https://note-app-8r1f.onrender.com/api/auth/register',
+        form
+      );
       toast.success(res.data.msg || 'Pendaftaran berhasil!');
-      navigate('/login');
+      setTimeout(() => navigate('/login'), 2000);
     } catch (err) {
       toast.error(err.response?.data?.msg || 'Gagal mendaftar');
     }

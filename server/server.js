@@ -3,30 +3,41 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 require('dotenv').config();
 
-const app = express();
-// Tambahkan di atas baris app.use
-console.log('Notes router:', require('./routes/notes'));
+const authRoutes = require('./routes/auth');
+const notesRoutes = require('./routes/notes');
 
-app.use(cors());
+const app = express();
+
+// Middleware
+const corsOptions = {
+  origin: 'https://note-app-nine-delta.vercel.app',
+  credentials: true
+};
+app.use(cors(corsOptions));
+;
 app.use(express.json());
 
 // Routes
-app.use('/api/auth', require('./routes/auth'));
-app.use('/api/notes', require('./routes/notes'));
+app.use('/api/auth', authRoutes);
+app.use('/api/notes', notesRoutes);
 
-// Coba route default
+// Default route
 app.get('/', (req, res) => {
   res.send('API is running');
 });
 
-// DB & Server
-mongoose.connect(process.env.MONGO_URI)
-  .then(() => {
-    console.log('MongoDB connected');
-    app.listen(process.env.PORT || 5000, () => {
-      console.log(`Server running on port ${process.env.PORT}`);
-    });
-  })
-  .catch(err => {
-    console.error('Database connection error:', err.message);
+// Database connection and server start
+const PORT = process.env.PORT || 5000;
+mongoose.connect(process.env.MONGO_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+})
+.then(() => {
+  console.log('MongoDB connected');
+  app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
   });
+})
+.catch(err => {
+  console.error('Database connection error:', err.message);
+});
